@@ -17,5 +17,5 @@ export const fetchAccessToken = async () => {
   });
 
   const data = await response.json();
-  return data.access_token; // The access token we need
+  return data.access_token;
 };
