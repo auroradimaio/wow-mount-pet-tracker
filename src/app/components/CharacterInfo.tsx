@@ -8,7 +8,7 @@ import Pngegg3 from "../images/pngegg (3).png";
 import MountCardSkeleton from "./helpers/MountCardSkeleton";
 import CharacterDoesNotExist from "./helpers/CharacterDoesNotExist";
 import CharacterDoesNotHaveData from "./helpers/CharacterDoesNotHaveData";
-import Skeleton from "./helpers/skeleton";
+import Skeleton from "./helpers/Skeleton";
 
 interface CharacterInfoProps {
   characterName: string;
