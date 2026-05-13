@@ -1,21 +1,16 @@
-// utils/fetchAccessToken.ts
-export const fetchAccessToken = async () => {
-  const clientId = process.env.NEXT_PUBLIC_WOW_CLIENT_ID;
-  const clientSecret = process.env.NEXT_PUBLIC_WOW_CLIENT_SECRET;
+let cachedToken: string | null = null;
+let tokenExpiry = 0;
 
-  const response = await fetch("https://us.battle.net/oauth/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `Basic ${Buffer.from(
-        `${clientId}:${clientSecret}`
-      ).toString("base64")}`,
-    },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-    }),
-  });
+export const fetchAccessToken = async (): Promise<string> => {
+  if (cachedToken && Date.now() < tokenExpiry) {
+    return cachedToken;
+  }
 
+  const response = await fetch("/api/token");
   const data = await response.json();
-  return data.access_token;
+
+  cachedToken = data.access_token;
+  tokenExpiry = Date.now() + (data.expires_in - 60) * 1000;
+
+  return cachedToken as string;
 };
