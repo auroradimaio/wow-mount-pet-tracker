@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./styles/globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "WoW Mount & Pet Tracker",
@@ -26,6 +27,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
