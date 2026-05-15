@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchAccessToken } from "../utils/fetchAccessToken";
 import Image from "next/image";
 import PetDoesNotExist from "./helpers/PetDoesNotExist";
+import Skeleton from "./helpers/Skeleton";
 
 interface PetData {
   id: number;
@@ -42,96 +43,113 @@ export default function PetInfo({ petName }: { petName: string }) {
       setPetIcon("");
       setAbilities([]);
 
-      const accessToken = await fetchAccessToken();
+      try {
+        const accessToken = await fetchAccessToken();
 
-      // 1. Fetch pet index (cached after first call)
-      if (!petIndexCache) {
-        const indexRes = await fetch(
-          `https://eu.api.blizzard.com/data/wow/pet/index?namespace=static-eu&locale=en_US`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
+        if (!petIndexCache) {
+          const indexRes = await fetch(
+            `https://eu.api.blizzard.com/data/wow/pet/index?namespace=static-eu&locale=en_US`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          );
+
+          if (!indexRes.ok) {
+            setNotFound(true);
+            return;
+          }
+
+          const indexData = await indexRes.json();
+          petIndexCache = indexData.pets;
+        }
+
+        const match = petIndexCache!.find(
+          (p) => p.name.toLowerCase() === petName.toLowerCase(),
         );
 
-        if (!indexRes.ok) {
+        if (!match) {
           setNotFound(true);
-          setLoading(false);
           return;
         }
 
-        const indexData = await indexRes.json();
-        petIndexCache = indexData.pets;
-      }
+        const petId = match.id;
 
-      // 2. Find pet by name (case-insensitive)
-      const match = petIndexCache!.find(
-        (p) => p.name.toLowerCase() === petName.toLowerCase(),
-      );
+        const [detailRes, mediaRes] = await Promise.all([
+          fetch(
+            `https://eu.api.blizzard.com/data/wow/pet/${petId}?namespace=static-eu&locale=en_US`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          ),
+          fetch(
+            `https://eu.api.blizzard.com/data/wow/media/pet/${petId}?namespace=static-eu&locale=en_US`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          ),
+        ]);
 
-      if (!match) {
-        setNotFound(true);
+        if (!detailRes.ok) {
+          setNotFound(true);
+          return;
+        }
+
+        const detail: PetData = await detailRes.json();
+        const media = await mediaRes.json();
+
+        setPetData(detail);
+        setPetIcon(media?.assets?.[0]?.value ?? "");
+
+        const abilityResults = await Promise.all(
+          detail.abilities.map(async ({ ability }) => {
+            const [abilRes, abilMediaRes] = await Promise.all([
+              fetch(
+                `https://eu.api.blizzard.com/data/wow/pet-ability/${ability.id}?namespace=static-eu&locale=en_US`,
+                { headers: { Authorization: `Bearer ${accessToken}` } },
+              ),
+              fetch(
+                `https://eu.api.blizzard.com/data/wow/media/pet-ability/${ability.id}?namespace=static-eu&locale=en_US`,
+                { headers: { Authorization: `Bearer ${accessToken}` } },
+              ),
+            ]);
+
+            const abilData = await abilRes.json();
+            const abilMedia = await abilMediaRes.json();
+
+            return {
+              id: ability.id,
+              name: abilData.name,
+              icon: abilMedia?.assets?.[0]?.value ?? "",
+            };
+          }),
+        );
+
+        setAbilities(abilityResults);
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const petId = match.id;
-
-      // 3. Fetch pet detail + media in parallel
-      const [detailRes, mediaRes] = await Promise.all([
-        fetch(
-          `https://eu.api.blizzard.com/data/wow/pet/${petId}?namespace=static-eu&locale=en_US`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        ),
-        fetch(
-          `https://eu.api.blizzard.com/data/wow/media/pet/${petId}?namespace=static-eu&locale=en_US`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        ),
-      ]);
-
-      if (!detailRes.ok) {
-        setNotFound(true);
-        setLoading(false);
-        return;
-      }
-
-      const detail: PetData = await detailRes.json();
-      const media = await mediaRes.json();
-
-      setPetData(detail);
-      setPetIcon(media?.assets?.[0]?.value ?? "");
-
-      // 4. Fetch all abilities + their icons in parallel
-      const abilityResults = await Promise.all(
-        detail.abilities.map(async ({ ability }) => {
-          const [abilRes, abilMediaRes] = await Promise.all([
-            fetch(
-              `https://eu.api.blizzard.com/data/wow/pet-ability/${ability.id}?namespace=static-eu&locale=en_US`,
-              { headers: { Authorization: `Bearer ${accessToken}` } },
-            ),
-            fetch(
-              `https://eu.api.blizzard.com/data/wow/media/pet-ability/${ability.id}?namespace=static-eu&locale=en_US`,
-              { headers: { Authorization: `Bearer ${accessToken}` } },
-            ),
-          ]);
-
-          const abilData = await abilRes.json();
-          const abilMedia = await abilMediaRes.json();
-
-          return {
-            id: ability.id,
-            name: abilData.name,
-            icon: abilMedia?.assets?.[0]?.value ?? "",
-          };
-        }),
-      );
-
-      setAbilities(abilityResults);
-      setLoading(false);
     };
 
     fetchPet();
   }, [petName]);
 
   if (loading) {
-    return <div className="text-[#c79c6e] mt-8 text-center">Searching...</div>;
+    return (
+      <div className="mt-8 flex flex-col items-center gap-6">
+        <div className="flex items-center gap-6">
+          <Skeleton loading className="w-[100px] h-[100px] rounded-lg" />
+          <div className="flex flex-col gap-3">
+            <Skeleton loading size="large" />
+            <Skeleton loading className="h-4 w-24" />
+            <Skeleton loading className="h-4 w-72" />
+            <Skeleton loading className="h-4 w-56" />
+          </div>
+        </div>
+        <div className="w-full max-w-2xl">
+          <Skeleton loading className="h-6 w-24 mb-3" />
+          <div className="grid grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} loading className="h-12" />
+            ))}
+          </div>
+        </div>
+        <Skeleton loading className="h-10 w-40 rounded-[25px]" />
+      </div>
+    );
   }
 
   if (notFound) {
@@ -142,7 +160,6 @@ export default function PetInfo({ petName }: { petName: string }) {
 
   return (
     <div className="mt-8 flex flex-col items-center gap-6">
-      {/* Pet header */}
       <div className="flex items-center gap-6">
         {petIcon && (
           <Image
@@ -160,7 +177,6 @@ export default function PetInfo({ petName }: { petName: string }) {
         </div>
       </div>
 
-      {/* Abilities */}
       {abilities.length > 0 && (
         <div className="w-full max-w-2xl">
           <h3 className="text-xl text-[#c79c6e] mb-3">Abilities</h3>
@@ -186,7 +202,6 @@ export default function PetInfo({ petName }: { petName: string }) {
         </div>
       )}
 
-      {/* Wowhead link */}
       <a
         href={`https://www.wowhead.com/npc=${petData.creature.id}/${petData.name
           .toLowerCase()

@@ -6,8 +6,8 @@ export default function MountCard({ name, icon }: { name: string; icon: string }
       {icon ? (
         <Image className="rounded-lg" src={icon} height={200} width={200} alt={name} />
       ) : (
-        <div className="bg-gray-400 h-48 w-48 flex justify-center items-center">
-          <p className="text-white text-xl">No Image</p>
+        <div className="bg-gray-800 border border-gray-700 h-48 w-48 flex justify-center items-center rounded-lg">
+          <p className="text-gray-500 text-sm">No Image</p>
         </div>
       )}
       <p className="mt-2 text-xl">{name}</p>

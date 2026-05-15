@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
-import Pngegg2 from "../images/pngegg (2).png";
+import alliance from "../images/alliance.png";
+import horde from "../images/horde.png";
 import MountCard from "./MountCard";
 import { fetchAccessToken } from "../utils/fetchAccessToken";
 import { useEffect, useState, useRef } from "react";
-import Pngegg3 from "../images/pngegg (3).png";
 import MountCardSkeleton from "./helpers/MountCardSkeleton";
 import CharacterDoesNotExist from "./helpers/CharacterDoesNotExist";
 import CharacterDoesNotHaveData from "./helpers/CharacterDoesNotHaveData";
@@ -40,6 +40,15 @@ interface CharacterData {
   name: string;
   faction: { type: "ALLIANCE" | "HORDE" };
   active_title: { name: string };
+}
+
+interface MountCollectionItem {
+  mount: { id: number; name: string };
+}
+
+interface PetCollectionItem {
+  species: { name: string };
+  creature_display?: { id: number };
 }
 
 export default function CharacterInfo({
@@ -218,61 +227,61 @@ export default function CharacterInfo({
       mountCacheRef.current.clear();
       petCacheRef.current.clear();
 
-      const accessToken = await fetchAccessToken();
-      accessTokenRef.current = accessToken;
+      try {
+        const accessToken = await fetchAccessToken();
+        accessTokenRef.current = accessToken;
 
-      const formattedServer = encodeURIComponent(
-        characterServer.toLowerCase().replace(/'/g, "").replace(/\s+/g, "-"),
-      );
-      const formattedCharacter = characterName.toLowerCase();
+        const formattedServer = encodeURIComponent(
+          characterServer.toLowerCase().replace(/'/g, "").replace(/\s+/g, "-"),
+        );
+        const formattedCharacter = characterName.toLowerCase();
 
-      const characterDetailsResponse = await fetch(
-        `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}?namespace=profile-eu&locale=en_US`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
+        const characterDetailsResponse = await fetch(
+          `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}?namespace=profile-eu&locale=en_US`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        );
 
-      if (!characterDetailsResponse.ok) {
-        console.error("Failed to fetch character data");
-        setCharacterData(null);
+        if (!characterDetailsResponse.ok) {
+          setCharacterData(null);
+          return;
+        }
+
+        const charData = await characterDetailsResponse.json();
+        setCharacterData(charData);
+
+        const [mountsResponse, petsResponse] = await Promise.all([
+          fetch(
+            `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}/collections/mounts?namespace=profile-eu&locale=en_US`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          ),
+          fetch(
+            `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}/collections/pets?namespace=profile-eu&locale=en_US`,
+            { headers: { Authorization: `Bearer ${accessToken}` } },
+          ),
+        ]);
+
+        if (mountsResponse.ok) {
+          const mountsData = await mountsResponse.json();
+          const rawMountList: RawMount[] = mountsData.mounts.map((m: MountCollectionItem) => ({
+            id: m.mount.id,
+            name: m.mount.name,
+          }));
+          setRawMounts(rawMountList);
+        }
+
+        if (petsResponse.ok) {
+          const petsData = await petsResponse.json();
+          const rawPetList: RawPet[] = petsData.pets.map((p: PetCollectionItem) => ({
+            name: p.species.name,
+            creatureDisplayId: p.creature_display?.id,
+          }));
+          setRawPets(rawPetList);
+        }
+      } finally {
         setInitialLoading(false);
-        return;
       }
-
-      const charData = await characterDetailsResponse.json();
-      setCharacterData(charData);
-
-      const [mountsResponse, petsResponse] = await Promise.all([
-        fetch(
-          `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}/collections/mounts?namespace=profile-eu&locale=en_US`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        ),
-        fetch(
-          `https://eu.api.blizzard.com/profile/wow/character/${formattedServer}/${formattedCharacter}/collections/pets?namespace=profile-eu&locale=en_US`,
-          { headers: { Authorization: `Bearer ${accessToken}` } },
-        ),
-      ]);
-
-      if (mountsResponse.ok) {
-        const mountsData = await mountsResponse.json();
-        const rawMountList: RawMount[] = mountsData.mounts.map((m: any) => ({
-          id: m.mount.id,
-          name: m.mount.name,
-        }));
-        setRawMounts(rawMountList);
-      }
-
-      if (petsResponse.ok) {
-        const petsData = await petsResponse.json();
-        const rawPetList: RawPet[] = petsData.pets.map((p: any) => ({
-          name: p.species.name,
-          creatureDisplayId: p.creature_display?.id,
-        }));
-        setRawPets(rawPetList);
-      }
-
-      setInitialLoading(false);
     };
 
     searchCharacter();
@@ -306,7 +315,7 @@ export default function CharacterInfo({
           <div className="grid grid-cols-[auto_1fr_1fr] gap-2 p-4 rounded-lg items-center">
             <Image
               src={
-                characterData?.faction?.type === "ALLIANCE" ? Pngegg2 : Pngegg3
+                characterData?.faction?.type === "ALLIANCE" ? alliance : horde
               }
               alt="AllianceOrHorde Logo"
               width={130}
@@ -385,7 +394,7 @@ export default function CharacterInfo({
                   disabled={currentPage === 1 || isLoading}
                   onClick={() => handlePageChange(currentPage - 1)}
                 >
-                  previous
+                  Previous
                 </button>
                 <button
                   className={`p-2 rounded-[25px] w-[200px] ${
@@ -394,7 +403,7 @@ export default function CharacterInfo({
                   disabled={currentPage === totalPages || isLoading}
                   onClick={() => handlePageChange(currentPage + 1)}
                 >
-                  next
+                  Next
                 </button>
               </div>
             )}

@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   title: "WoW Mount & Pet Tracker",
   description:
     "Track mounts and pets for any World of Warcraft character. No login required, real-time data.",
+  openGraph: {
+    title: "WoW Mount & Pet Tracker",
+    description:
+      "Track mounts and pets for any World of Warcraft character. No login required, real-time data.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

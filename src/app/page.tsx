@@ -38,7 +38,9 @@ export default function Home() {
             transition={{ repeat: Infinity, duration: 2 }}
             className="text-white/50 cursor-pointer"
             onClick={() =>
-              document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })
+              document
+                .getElementById("features")
+                ?.scrollIntoView({ behavior: "smooth" })
             }
           >
             <ChevronDown />
@@ -97,11 +99,11 @@ export default function Home() {
               >
                 <Trophy className="w-10 h-10 text-wow-gold" />
               </motion.div>
-              <h3 className="text-2xl  text-wow-gold mb-4 group-hover:text-wow-gold-light transition-colors">
+              <h3 className="text-2xl text-wow-gold mb-4 group-hover:text-wow-gold-light transition-colors">
                 Mounts Lookup
               </h3>
               <p className="text-gray-300 leading-relaxed mb-6">
-                Lookup any mount by name to see how to collect it.
+                Search any mount by name to see its details and a direct Wowhead link.
               </p>
               <div className="flex items-center text-wow-gold/70 group-hover:text-wow-gold transition-colors">
                 <span className="text-sm font-semibold">Explore</span>
@@ -123,11 +125,11 @@ export default function Home() {
               >
                 <PawPrint className="w-10 h-10 text-wow-gold" />
               </motion.div>
-              <h3 className="text-2xl  text-wow-gold mb-4 group-hover:text-wow-gold-light transition-colors">
+              <h3 className="text-2xl text-wow-gold mb-4 group-hover:text-wow-gold-light transition-colors">
                 Pets Lookup
               </h3>
               <p className="text-gray-300 leading-relaxed mb-6">
-                Lookup any pet by name to see how to collect it.
+                Search any pet by name to see its details, abilities, and a direct Wowhead link.
               </p>
               <div className="flex items-center text-wow-gold/70 group-hover:text-wow-gold transition-colors">
                 <span className="text-sm font-semibold">Explore</span>
@@ -154,7 +156,7 @@ export default function Home() {
               <Zap className="w-12 h-12 text-wow-gold" />
             </motion.div>
 
-            <h2 className="text-4xl  text-wow-gold mb-6">How Does It Work?</h2>
+            <h2 className="text-4xl text-wow-gold mb-6">How Does It Work?</h2>
 
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-wow-gold/20">
               <p className="text-xl text-gray-300 leading-relaxed mb-8">

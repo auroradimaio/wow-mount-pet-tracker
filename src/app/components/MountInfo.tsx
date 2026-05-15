@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchAccessToken } from "../utils/fetchAccessToken";
 import Image from "next/image";
 import PetDoesNotExist from "./helpers/PetDoesNotExist";
+import Skeleton from "./helpers/Skeleton";
 
 interface MountData {
   id: number;
@@ -32,7 +33,6 @@ export default function MountInfo({ mountName }: { mountName: string }) {
       try {
         const accessToken = await fetchAccessToken();
 
-        // 1. Fetch mount index (cached after first call)
         if (!mountIndexCache) {
           const indexRes = await fetch(
             `https://eu.api.blizzard.com/data/wow/mount/index?namespace=static-eu&locale=en_US`,
@@ -49,7 +49,6 @@ export default function MountInfo({ mountName }: { mountName: string }) {
           mountIndexCache = indexData.mounts;
         }
 
-        // 2. Find pet by name (case-insensitive)
         const match = mountIndexCache!.find(
           (p) => p.name.toLowerCase() === mountName.toLowerCase(),
         );
@@ -96,7 +95,19 @@ export default function MountInfo({ mountName }: { mountName: string }) {
   }, [mountName]);
 
   if (loading) {
-    return <div className="text-[#c79c6e] mt-8 text-center">Searching...</div>;
+    return (
+      <div className="mt-8 flex flex-col items-center gap-6">
+        <div className="flex items-center gap-6">
+          <Skeleton loading className="w-[100px] h-[100px] rounded-lg" />
+          <div className="flex flex-col gap-3">
+            <Skeleton loading size="large" />
+            <Skeleton loading className="h-4 w-72" />
+            <Skeleton loading className="h-4 w-56" />
+          </div>
+        </div>
+        <Skeleton loading className="h-10 w-40 rounded-[25px]" />
+      </div>
+    );
   }
 
   if (notFound) {
@@ -107,7 +118,6 @@ export default function MountInfo({ mountName }: { mountName: string }) {
 
   return (
     <div className="mt-8 flex flex-col items-center gap-6">
-      {/* Mount header */}
       <div className="flex items-center gap-6">
         {mountIcon && (
           <Image
@@ -124,7 +134,6 @@ export default function MountInfo({ mountName }: { mountName: string }) {
         </div>
       </div>
 
-      {/* Wowhead link */}
       <a
         href={`https://www.wowhead.com/items/miscellaneous/mounts/name:${encodeURIComponent(mountData.name)}`}
         target="_blank"

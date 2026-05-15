@@ -5,20 +5,23 @@ const sizeClasses = {
 };
 
 export default function Skeleton({
-    loading,
-    size = 'medium',
-    children,
+  loading,
+  size,
+  className,
+  children,
 }: {
-    loading: boolean
-    size?: 'small' | 'medium' | 'large'
-    children?: React.ReactNode
-}){
-
-   if (loading) {
+  loading: boolean;
+  size?: "small" | "medium" | "large";
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  if (loading) {
+    const sizeClass = size ? sizeClasses[size] : "";
     return (
-      <div className={`${sizeClasses[size]} bg-[#c79c6e] rounded animate-pulse`} />
+      <div
+        className={`bg-[#c79c6e]/20 rounded animate-pulse ${sizeClass} ${className ?? ""}`}
+      />
     );
   }
-
   return <>{children}</>;
 }
