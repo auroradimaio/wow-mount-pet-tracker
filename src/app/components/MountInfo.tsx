@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { fetchAccessToken } from "../utils/fetchAccessToken";
 import Image from "next/image";
-import PetDoesNotExist from "./helpers/PetDoesNotExist";
 import Skeleton from "./helpers/Skeleton";
+import NotFound from "./helpers/NotFound";
 
 interface MountData {
   id: number;
@@ -111,7 +111,7 @@ export default function MountInfo({ mountName }: { mountName: string }) {
   }
 
   if (notFound) {
-    return <PetDoesNotExist />;
+    return <NotFound />;
   }
 
   if (!mountData) return null;

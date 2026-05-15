@@ -1,7 +1,7 @@
 import Image from "next/image";
 import CharacterNotFound from "../../images/CharacterNotFound.png";
 
-export default function PetDoesNotExist() {
+export default function NotFound() {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="text-4xl">Not found</div>

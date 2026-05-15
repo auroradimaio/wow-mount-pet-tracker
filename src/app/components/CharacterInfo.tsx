@@ -129,7 +129,6 @@ export default function CharacterInfo({
 
       return enrichedMount;
     } catch (error) {
-      console.error(`Failed to fetch mount ${mount.id}:`, error);
       return { id: mount.id, name: mount.name, icon: "" };
     }
   };
@@ -169,7 +168,6 @@ export default function CharacterInfo({
 
       return enrichedPet;
     } catch (error) {
-      console.error(`Failed to fetch pet ${pet.name}:`, error);
       return { name: pet.name, icon: "" };
     }
   };
@@ -264,19 +262,23 @@ export default function CharacterInfo({
 
         if (mountsResponse.ok) {
           const mountsData = await mountsResponse.json();
-          const rawMountList: RawMount[] = mountsData.mounts.map((m: MountCollectionItem) => ({
-            id: m.mount.id,
-            name: m.mount.name,
-          }));
+          const rawMountList: RawMount[] = mountsData.mounts.map(
+            (m: MountCollectionItem) => ({
+              id: m.mount.id,
+              name: m.mount.name,
+            }),
+          );
           setRawMounts(rawMountList);
         }
 
         if (petsResponse.ok) {
           const petsData = await petsResponse.json();
-          const rawPetList: RawPet[] = petsData.pets.map((p: PetCollectionItem) => ({
-            name: p.species.name,
-            creatureDisplayId: p.creature_display?.id,
-          }));
+          const rawPetList: RawPet[] = petsData.pets.map(
+            (p: PetCollectionItem) => ({
+              name: p.species.name,
+              creatureDisplayId: p.creature_display?.id,
+            }),
+          );
           setRawPets(rawPetList);
         }
       } finally {

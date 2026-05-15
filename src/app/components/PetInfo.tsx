@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { fetchAccessToken } from "../utils/fetchAccessToken";
 import Image from "next/image";
-import PetDoesNotExist from "./helpers/PetDoesNotExist";
 import Skeleton from "./helpers/Skeleton";
+import NotFound from "./helpers/NotFound";
 
 interface PetData {
   id: number;
@@ -153,7 +153,7 @@ export default function PetInfo({ petName }: { petName: string }) {
   }
 
   if (notFound) {
-    return <PetDoesNotExist />;
+    return <NotFound />;
   }
 
   if (!petData) return null;
