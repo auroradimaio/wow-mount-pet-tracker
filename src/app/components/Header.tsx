@@ -3,6 +3,8 @@ import Image from "next/image";
 import wowLogo from "../images/wowLogo.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Menu } from "lucide-react";
 
 const navLinks = [
   { href: "/character", label: "Characters" },
@@ -16,6 +18,28 @@ const navLinks = [
 
 export default function Header() {
   const pathName = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const showMobileMenu = () => {
+    return (
+      <div
+        className="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 flex flex-col items-center justify-center space-y-6"
+        onClick={() => setIsOpen(false)}
+      >
+        {navLinks.map(({ href, label }) => (
+          <Link
+            key={href}
+            href={href}
+            className={`text-[#c79c6e] text-3xl py-2 px-4 rounded-[25px] transition-colors ${
+              pathName === href ? "bg-gray-700" : "hover:bg-gray-800"
+            }`}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="flex justify-center">
@@ -31,7 +55,7 @@ export default function Header() {
             />
           </Link>
 
-          <nav className="space-x-4">
+          <nav className="hidden md:flex space-x-4">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
@@ -44,8 +68,13 @@ export default function Header() {
               </Link>
             ))}
           </nav>
+          <Menu
+            className="md:hidden text-wow-gold cursor-pointer"
+            onClick={() => setIsOpen(true)}
+          />
         </div>
       </header>
+      {isOpen && showMobileMenu()}
     </div>
   );
 }

@@ -313,8 +313,8 @@ export default function CharacterInfo({
       {!characterData && !initialLoading ? (
         <CharacterDoesNotExist />
       ) : (
-        <div className="justify-center">
-          <div className="grid grid-cols-[auto_1fr_1fr] gap-2 p-4 rounded-lg items-center">
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr] gap-2 p-4 rounded-lg items-center">
             <Image
               src={
                 characterData?.faction?.type === "ALLIANCE" ? alliance : horde
@@ -322,27 +322,29 @@ export default function CharacterInfo({
               alt="AllianceOrHorde Logo"
               width={130}
               height={130}
-              className="ml-4"
+              className="justify-self-center md:justify-self-start"
             />
-            <div className="flex flex-col justify-center gap-2">
-              <div className="text-4xl">{characterName}</div>
+            <div className="flex flex-col justify-center gap-2 text-center md:text-left">
+              <div className="text-2xl md:text-4xl">{characterName}</div>
               <div className="text-xl">{characterData?.active_title?.name}</div>
             </div>
-            <div className="flex flex-col justify-center gap-2">
+            <div className="flex flex-col justify-center gap-2 text-center md:text-left">
               <Skeleton loading={initialLoading} size="large">
-                <div className="text-4xl">
+                <div className="text-2xl md:text-4xl">
                   {rawMounts.length} Mounts Collected
                 </div>
               </Skeleton>
               <Skeleton loading={initialLoading} size="large">
-                <div className="text-4xl">{rawPets.length} Pets Collected</div>
+                <div className="text-2xl md:text-4xl">
+                  {rawPets.length} Pets Collected
+                </div>
               </Skeleton>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 justify-center md:justify-start">
             <button
               onClick={() => handleViewChange("mounts")}
-              className={`p-2 rounded-[25px] w-[200px] ${
+              className={`py-2 px-4 rounded-[25px] ${
                 view === "mounts" ? "bg-[#a57b4b]" : "bg-[#c79c6e]"
               }`}
             >
@@ -350,14 +352,14 @@ export default function CharacterInfo({
             </button>
             <button
               onClick={() => handleViewChange("pets")}
-              className={`p-2 rounded-[25px] w-[200px] ${
+              className={`py-2 px-4 rounded-[25px] ${
                 view === "pets" ? "bg-[#a57b4b]" : "bg-[#c79c6e]"
               }`}
             >
               View Pet Collection
             </button>
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             {isLoading ? (
               Array.from({ length: itemsPerPage }).map((_, index) => (
                 <MountCardSkeleton key={index} loading={true} />
@@ -379,7 +381,7 @@ export default function CharacterInfo({
             ) : (
               displayPets.map((pet, index) => (
                 <MountCard
-                  key={pet.name || index}
+                  key={`${pet.name}-${index}`}
                   name={pet.name}
                   icon={pet.icon}
                 />
@@ -388,9 +390,9 @@ export default function CharacterInfo({
           </div>
           <div className="grid gap-6">
             {!isLoading && totalPages > 0 && (
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-6 gap-4">
                 <button
-                  className={`p-2 rounded-[25px] w-[200px] ${
+                  className={`p-2 rounded-[25px] flex-1 ${
                     currentPage === 1 ? "bg-gray-500" : "bg-[#c79c6e]"
                   }`}
                   disabled={currentPage === 1 || isLoading}
@@ -399,7 +401,7 @@ export default function CharacterInfo({
                   Previous
                 </button>
                 <button
-                  className={`p-2 rounded-[25px] w-[200px] ${
+                  className={`p-2 rounded-[25px] flex-1 ${
                     currentPage === totalPages ? "bg-gray-500" : "bg-[#c79c6e]"
                   }`}
                   disabled={currentPage === totalPages || isLoading}

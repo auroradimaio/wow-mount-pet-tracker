@@ -39,7 +39,13 @@ export default function SearchBar({
           if (!initialRealm) setSelectedServer(serverNames[0] ?? "");
         }
       } catch {
-        const fallback = ["Draenor", "Kazzak", "Nemesis", "Outland", "Silvermoon"];
+        const fallback = [
+          "Draenor",
+          "Kazzak",
+          "Nemesis",
+          "Outland",
+          "Silvermoon",
+        ];
         setServers(fallback);
         if (!initialRealm) setSelectedServer(fallback[0]);
       } finally {
@@ -56,7 +62,10 @@ export default function SearchBar({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsDropdownOpen(false);
         setServerFilter("");
       }
@@ -67,10 +76,21 @@ export default function SearchBar({
 
   const filteredServers = servers
     .filter((server) => {
-      const excludePatterns = [/^EU\d/, /Account Realm/i, /-INST/, /Arena Pass/i, /Auxiliary/i, /^RDB /i, /^zzz_/, /-BG-/];
+      const excludePatterns = [
+        /^EU\d/,
+        /Account Realm/i,
+        /-INST/,
+        /Arena Pass/i,
+        /Auxiliary/i,
+        /^RDB /i,
+        /^zzz_/,
+        /-BG-/,
+      ];
       return !excludePatterns.some((pattern) => pattern.test(server));
     })
-    .filter((server) => server.toLowerCase().includes(serverFilter.toLowerCase()));
+    .filter((server) =>
+      server.toLowerCase().includes(serverFilter.toLowerCase()),
+    );
 
   const handleSearch = () => {
     if (characterName.trim() !== "") {
@@ -95,7 +115,7 @@ export default function SearchBar({
           className="p-2 rounded-l-[25px] flex-grow bg-gray-900 text-[#c79c6e]"
         />
 
-        <div className="relative min-w-[200px]" ref={dropdownRef}>
+        <div className="relative " ref={dropdownRef}>
           <button
             type="button"
             aria-haspopup="listbox"

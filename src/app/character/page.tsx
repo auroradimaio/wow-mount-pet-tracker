@@ -32,12 +32,13 @@ function CharacterPage() {
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
-        <h2 className="text-2xl mb-2">
+        <h2 className="text-2xl mb-2 text-center">
           Find out how many mounts and pets WoW players currently have!
         </h2>
         <p className="text-yellow-400/70 text-sm mb-1">EU region only</p>
         <p className="text-gray-400 text-sm mb-4">
-          Enter any EU Battle.net character name and their realm to see their collection.
+          Enter any EU Battle.net character name and their realm to see their
+          collection.
         </p>
       </div>
 
