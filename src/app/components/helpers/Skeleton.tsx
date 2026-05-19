@@ -19,6 +19,7 @@ export default function Skeleton({
     const sizeClass = size ? sizeClasses[size] : "";
     return (
       <div
+        data-testid="skeleton"
         className={`bg-[#c79c6e]/20 rounded animate-pulse ${sizeClass} ${className ?? ""}`}
       />
     );

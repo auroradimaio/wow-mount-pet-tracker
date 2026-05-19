@@ -23,6 +23,7 @@ export default function Header() {
   const showMobileMenu = () => {
     return (
       <div
+        data-testid="mobile-menu"
         className="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 flex flex-col items-center justify-center space-y-6"
         onClick={() => setIsOpen(false)}
       >
@@ -43,7 +44,10 @@ export default function Header() {
 
   return (
     <div className="flex justify-center">
-      <header className="bg-gray-900 text-white py-2 shadow-md rounded-[25px] w-full mx-4">
+      <header
+        className="bg-gray-900 text-white py-2 shadow-md rounded-[25px] w-full mx-4"
+        data-testid="header"
+      >
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/">
             <Image
@@ -69,6 +73,7 @@ export default function Header() {
             ))}
           </nav>
           <Menu
+            data-testid="mobile-menu-button"
             className="md:hidden text-wow-gold cursor-pointer"
             onClick={() => setIsOpen(true)}
           />

@@ -15,6 +15,10 @@ interface MountData {
 
 let mountIndexCache: { id: number; name: string }[] | null = null;
 
+export function _resetMountCache() {
+  mountIndexCache = null;
+}
+
 export default function MountInfo({ mountName }: { mountName: string }) {
   const [mountData, setMountData] = useState<MountData | null>(null);
   const [mountIcon, setMountIcon] = useState<string>("");

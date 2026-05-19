@@ -1,6 +1,6 @@
 # WoW Mount & Pet Tracker
 
-A Next.js web application for browsing World of Warcraft character collections and looking up mounts and pets. Uses Blizzard's official Battle.net API — no login required, no data stored.
+A Next.js web application for browsing World of Warcraft character collections and looking up mounts and pets. Uses Blizzard's official Battle.net API — no login required, no data stored. Tested with Jest and React Testing Library.
 
 **Live demo: [wow-mount-pet-tracker.vercel.app](https://wow-mount-pet-tracker.vercel.app)**
 
@@ -72,8 +72,10 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Scripts
 
 ```bash
-npm run dev      # Development server
-npm run build    # Production build
-npm run start    # Production server
-npm run lint     # ESLint
+npm run dev        # Development server
+npm run build      # Production build
+npm run start      # Production server
+npm run lint       # ESLint
+npm run test       # Run tests
+npm run test:watch # Run tests in watch mode
 ```

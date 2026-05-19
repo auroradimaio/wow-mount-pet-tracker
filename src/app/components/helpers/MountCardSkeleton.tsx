@@ -7,7 +7,7 @@ export default function MountCardSkeleton({
 }) {
   if (loading) {
     return (
-      <div className="flex flex-col gap-4 items-center ml-6 mt-10">
+      <div data-testid="mount-card-skeleton" className="flex flex-col gap-4 items-center ml-6 mt-10">
         <div className="bg-wow-gold-light h-48 w-48 rounded-lg animate-pulse" />
         <div className="h-8 w-60 bg-wow-gold-light rounded animate-pulse mt-2" />
       </div>

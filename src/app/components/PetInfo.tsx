@@ -26,6 +26,10 @@ interface PetAbility {
 
 let petIndexCache: { id: number; name: string }[] | null = null;
 
+export function _resetPetCache() {
+  petIndexCache = null;
+}
+
 export default function PetInfo({ petName }: { petName: string }) {
   const [petData, setPetData] = useState<PetData | null>(null);
   const [petIcon, setPetIcon] = useState<string>("");
